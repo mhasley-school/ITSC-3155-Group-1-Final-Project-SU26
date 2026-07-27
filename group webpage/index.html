@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Bites Bio Portal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <h1>Meet The Bug Hunters (Group 1):</h1>
+        <h1>ITSC 3155 OROS Final Project</h1>
+    <!-- Example team logo (Logo added or edited last per your request) -->
+    <img src="img/team-logo.png" alt="Bug Hunters" class="team-logo">
+
+    <nav>
+        <button onclick="showSection('bios')">Team Bios</button>
+        <button onclick="showSection('vision')">Team Vision</button>
+    </nav>
+</header>
+
+<!-- Team Bios Section Container -->
+<div id="bios" class="container">
+
+    <!-- LILI GIBSON -->
+    <div class="card lili-style">
+        <h2>Lili </br> Gibson</h2>
+        <p class="role">Scrum Master</p>
+        <img src="img/lili-avatar.png" alt="Lili Gibson Portrait" class="avatar">
+        <button onclick="toggleBio('bio1')">Show Bio</button>
+
+        <div id="bio1" class="bio">
+            <p>Dedicated and highly organized Scrum Master focused on project deadlines and group accountability.</p>
+            <div class="moodboard">
+                <h4>Inspiration Moodboard</h4>
+                <div class="moodboard-grid">
+                    <!-- FILL IN -->
+                    <img src="https://pbs.twimg.com/media/GVcncahacAAg0D0.jpg" alt="Lala Barina" class="moodboard-img">
+                    <img src="https://images.indianexpress.com/2021/12/minecraft-facts-featured.jpg?w=1600" alt="Minecraft" class="moodboard-img">
+                    <img src="https://img.motionrc.com/web/image/product.image/36112/image_1920/1020x680/6867be91_lego-technic-koenigsegg-jesko-absolut-grey-hypercar-42173" alt="Lego Koenigsegg" class="moodboard-img">
+                    <img src="https://online.njit.edu/sites/online/files/styles/4x3small/public/Comparing_Online_Cybersecurity_Programs_header.jpg?itok=tTdMGC-D" alt="Cybersecurity Symbol" class="moodboard-img">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MADISON HASLEY -->
+    <div class="card madison-style">
+        <h2>Madison </br> Hasley</h2>
+        <p class="role">Product Owner</p>
+        <img src="img/madison-avatar.png" alt="Madison Hasley Portrait" class="avatar">
+        <button onclick="toggleBio('bio2')">Show Bio</button>
+
+        <div id="bio2" class="bio">
+            <p>Highly efficient requirements analyst focused on task checklists and removing out-of-scope feature creep.</p>
+            <div class="moodboard">
+                <h4>Inspiration Moodboard</h4>
+                 <div class="moodboard-grid">
+                    <img src="https://i.pinimg.com/736x/5d/14/9e/5d149e2aae8ff570a7b71c09ca428468.jpg" alt="Smart Glasses Tech" class="moodboard-img">
+                    <img src="https://i.pinimg.com/736x/81/03/90/810390d17cbdea2c4b9dc97de12c175d.jpg" alt="NASA JPL Robotics" class="moodboard-img">
+                    <img src="https://i.pinimg.com/736x/ea/4a/12/ea4a1223c49897807620de13ba70e728.jpg" alt="Theory of Applied Robotics Book" class="moodboard-img">
+                    <img src="https://i.pinimg.com/736x/e9/62/2d/e9622d6cea1036003fa163ee4f089450.jpg" alt="Wireless AI Book" class="moodboard-img">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HASTI BHALODIA -->
+    <div class="card hasti-style">
+        <h2>Hasti </br> Bhalodia</h2>
+        <p class="role">Backend Developer</p>
+        <img src="img/hasti-avatar.png" alt="Hasti Bhalodia Portrait" class="avatar">
+        <button onclick="toggleBio('bio3')">Show Bio</button>
+
+        <div id="bio3" class="bio">
+            <p>Excellent at empathizing with the end user to translate client requirements into structured milestones.</p>
+            <div class="moodboard">
+                <h4>Inspiration Moodboard</h4>
+                    <div class="moodboard-grid">
+                    <!-- FILL IN -->
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeevaHlidWehhBbTftD1iuh1I9ZiYQGZXd04g_Hv8bBQ&s=10" alt="My First Desktop" class="moodboard-img">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhS_Il8GUCHEydK2FVsUv_ZToXPJqhGn91YObuLc0oxg&s=10" alt="C language" class="moodboard-img">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1iQY-eq57eJu8wDzsAvmPcYz2eHFXgxRsgYqR0ojp6A&s" alt="Google" class="moodboard-img">
+                        <img src="https://blog.herzing.ca/hubfs/data%20analytics.jpg" alt="Data Science" class="moodboard-img">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AMIR HOMSI -->
+    <div class="card amir-style">
+        <h2>Amir </br> Homsi</h2>
+        <p class="role">Backend Developer</p>
+        <img src="img/amir-avatar.png" alt="Amir Homsi Portrait" class="avatar">
+        <button onclick="toggleBio('bio4')">Show Bio</button>
+
+        <div id="bio4" class="bio">
+            <p>Logical developer tracking down complex database relationships and evaluating real-world application edge cases.</p>
+            <div class="moodboard">
+                <h4>Inspiration Moodboard</h4>
+                    <div class="moodboard-grid">
+                    <!-- FILL IN -->
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/22/Heckert_GNU_white.svg" alt="GNU Logo" class="moodboard-img">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/6/65/OpenSSH_logo.png" alt="OpenSSH Logo" class="moodboard-img">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/C_Logo.png" alt="C Logo" class="moodboard-img">
+                        <img src="https://media2.dev.to/dynamic/image/width=1600,height=900,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fpb2r2so3lu3566eelxso.jpg" alt="Tux the Linux penguin" class="moodboard-img">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SILA TUNDULA -->
+    <div class="card sila-style">
+        <h2>Sila </br> Tundula</h2>
+        <p class="role">Backend Developer</p>
+        <img src="img/sila-avatar.png" alt="Sila Tundula Portrait" class="avatar">
+        <button onclick="toggleBio('bio5')">Show Bio</button>
+
+        <div id="bio5" class="bio">
+            <p>Dependable team collaborator driven by peer communication, active project assistance, and open feedback loops.</p>
+            <div class="moodboard">
+                <h4>Inspiration Moodboard</h4>
+                    <div class="moodboard-grid">
+                    <!-- FILL IN -->
+                     <img src="https://images.unsplash.com/photo-1691643158804-d3f02eb456a3?w=500" alt="Stock Market Trading" class="moodboard-img">
+                    <img src="https://images.unsplash.com/photo-1612878010854-1250dfc5000a?w=500" alt="Psychology" class="moodboard-img">
+                    <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=500" alt="Programming" class="moodboard-img"> 
+                    <img src="https://images.unsplash.com/photo-1590012314607-cda9d9b699ae?w=500" alt="Graduation"  class="moodboard-img">
+
+                    </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Team Vision Section Container (Hidden by default) -->
+<div id="vision" class="container" style="display: none;">
+    <h2>Our Mission Statement</h2>
+    <p class="mission-text">
+        Our team is building a high-efficiency FastAPI backend to optimize restaurant
+        operations and make guest checkouts seamless. We combine data-driven engineering
+        with clear Agile workflows to deliver high-quality, reliable code on schedule.
+    </p>
+
+    <div class="rules-section">
+        <h3>Team Working Rules</h3>
+        <ul>
+            <li><strong>Commitment:</strong> Every developer must log task milestones on our board and submit verified, passing commits.</li>
+            <li><strong>Courage:</strong> Flag technical blockages or timeline delays inside the team chat immediately for open group support.</li>
+            <li><strong>Focus:</strong> Restrict development strictly to active sprint backlog tasks, avoiding unnecessary feature additions.</li>
+            <li><strong>Respect:</strong> Honor external work windows and course limits by utilizing structured, asynchronous text statuses.</li>
+        </ul>
+
+        <h3>Sprint Cadence</h3>
+        <p>Our team holds weekly sync sessions over Discord/Zoom on <strong>Tuesdays at 5:30 PM</strong> to evaluate milestone progress, clear roadblocks, and distribute upcoming sprint features.</p>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
