@@ -7,7 +7,10 @@ from api.schemas.review import ReviewCreate
 def create_review(db: Session, review_data: ReviewCreate):
     if not (1 <= review_data.score <= 5):
         raise HTTPException(status_code=400, detail="Score must be between 1 and 5")
-    db_review = Review(**review_data.model_dump())
+    payload = review_data.model_dump()
+    if not payload.get("order_id"):
+        payload["order_id"] = None
+    db_review = Review(**payload)
     db.add(db_review)
     db.commit()
     db.refresh(db_review)

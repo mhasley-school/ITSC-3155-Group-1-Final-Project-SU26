@@ -3,7 +3,7 @@ from typing import Optional
 
 
 class ReviewBase(BaseModel):
-    order_id: int
+    order_id: Optional[int] = None
     menu_item_id: int
     score: int
     review_text: Optional[str] = None
