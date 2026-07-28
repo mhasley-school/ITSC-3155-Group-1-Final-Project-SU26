@@ -1,30 +1,40 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from './Modal';
-import { today } from '../data';
 
 export default function Review({ isOpen, onClose, dishes = [], onSubmitReview }) {
-  const [selectedDishId, setSelectedDishId] = useState(dishes[0]?.id || '');
+  const [selectedDishId, setSelectedDishId] = useState('');
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [customerName, setCustomerName] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && dishes.length && !selectedDishId) {
+      setSelectedDishId(dishes[0].id);
+    }
+  }, [isOpen, dishes, selectedDishId]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const dish = dishes.find((d) => String(d.id) === String(selectedDishId));
-    onSubmitReview({
-      id: Date.now(),
-      dishId: selectedDishId,
-      dishName: dish?.name || 'General Experience',
-      rating,
-      comment,
-      customerName: customerName || 'Anonymous',
-      date: today()
-    });
-    setComment('');
-    setRating(5);
-    onClose();
+    setSubmitting(true);
+    try {
+      await onSubmitReview({
+        dishId: Number(selectedDishId),
+        dishName: dish?.name || 'General Experience',
+        rating,
+        comment,
+        customerName: customerName || 'Anonymous'
+      });
+      setComment('');
+      setRating(5);
+      onClose();
+    } catch {
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -70,11 +80,11 @@ export default function Review({ isOpen, onClose, dishes = [], onSubmitReview })
           />
         </label>
         <div className="btn-row">
-          <button type="button" onClick={onClose} className="btn-cancel">
+          <button type="button" onClick={onClose} className="btn-cancel" disabled={submitting}>
             Cancel
           </button>
-          <button type="submit" className="btn-submit">
-            Submit Review
+          <button type="submit" className="btn-submit" disabled={submitting || !dishes.length}>
+            {submitting ? 'Submitting…' : 'Submit Review'}
           </button>
         </div>
       </form>

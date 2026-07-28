@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import Modal from './Modal';
 import {
+  CATEGORIES,
   DIETARY_OPTIONS,
   EMPTY_DISH,
   ORDER_STATUSES,
@@ -11,6 +12,9 @@ import {
 
 export default function StaffPortal({
   dishes,
+  ingredients = [],
+  onUpdateIngredient,
+  onFilterOrdersByDate,
   onAddDish,
   onUpdateDish,
   onDeleteDish,
@@ -31,14 +35,9 @@ export default function StaffPortal({
   const [newPromo, setNewPromo] = useState({ code: '', discountPercent: 10, expiration: '' });
   const [revenueDate, setRevenueDate] = useState(today());
 
-  const lowStock = useMemo(
-    () => dishes.filter((d) => (d.ingredientsAvailable ?? 0) <= 3),
-    [dishes]
-  );
-  const filteredOrders = useMemo(
-    () =>
-      orders.filter((o) => (!startDate || o.date >= startDate) && (!endDate || o.date <= endDate)),
-    [orders, startDate, endDate]
+  const lowIngredients = useMemo(
+    () => ingredients.filter((ing) => Number(ing.quantity_in_stock) <= 50),
+    [ingredients]
   );
   const dailyOrders = useMemo(
     () => orders.filter((o) => o.date === revenueDate && o.status !== 'Cancelled'),
@@ -59,41 +58,7 @@ export default function StaffPortal({
   }, [reviews]);
 
   const setField = (key) => (e) => {
-    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    setDishForm((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const openDish = (dish = null) => {
-    setEditingDish(dish);
-    setDishForm(
-      dish
-        ? {
-            name: dish.name,
-            price: String(dish.price),
-            category: dish.category,
-            description: dish.description || '',
-            dietaryTags: [...(dish.dietaryTags || [])],
-            ingredientsAvailable: dish.ingredientsAvailable ?? 10,
-            isAvailable: dish.isAvailable !== false,
-            image: dish.image || EMPTY_DISH.image
-          }
-        : { ...EMPTY_DISH, dietaryTags: [] }
-    );
-    setIsDishOpen(true);
-  };
-
-  const saveDish = (e) => {
-    e.preventDefault();
-    const qty = parseInt(dishForm.ingredientsAvailable, 10) || 0;
-    const payload = {
-      ...dishForm,
-      price: parseFloat(dishForm.price),
-      ingredientsAvailable: qty,
-      isAvailable: dishForm.isAvailable && qty > 0
-    };
-    if (editingDish) onUpdateDish({ ...editingDish, ...payload });
-    else onAddDish({ ...payload, id: Date.now() });
-    setIsDishOpen(false);
+    setDishForm((prev) => ({ ...prev, [key]: e.target.value }));
   };
 
   const toggleDietary = (tag) =>
@@ -104,20 +69,53 @@ export default function StaffPortal({
         : [...prev.dietaryTags, tag]
     }));
 
+  const openDish = (dish = null) => {
+    setEditingDish(dish);
+    setDishForm(
+      dish
+        ? {
+            name: dish.name,
+            price: String(dish.price),
+            category: CATEGORIES.includes(dish.category) ? dish.category : 'Mains',
+            description: dish.description || '',
+            dietaryTags: [...(dish.dietaryTags || [])]
+          }
+        : { ...EMPTY_DISH, dietaryTags: [] }
+    );
+    setIsDishOpen(true);
+  };
+
+  const saveDish = (e) => {
+    e.preventDefault();
+    const payload = {
+      name: dishForm.name,
+      description: dishForm.description,
+      category: dishForm.category,
+      price: parseFloat(dishForm.price),
+      dietaryTags: dishForm.dietaryTags
+    };
+    if (editingDish) onUpdateDish({ ...editingDish, ...payload });
+    else onAddDish(payload);
+    setIsDishOpen(false);
+  };
+
   return (
     <div className="admin-container">
       <div className="admin-header">
         <h2>Staff & Admin Dashboard</h2>
       </div>
 
-      {lowStock.length > 0 && (
+      {lowIngredients.length > 0 && (
         <div className="alert-banner">
           <h4>Insufficient ingredients alert</h4>
+          <p className="text-sm" style={{ margin: '4px 0 8px' }}>
+            These ingredients are low or empty. Checkout will block orders that need more than available stock.
+          </p>
           <ul>
-            {lowStock.map((d) => (
-              <li key={d.id}>
-                <strong>{d.name}</strong> has only {d.ingredientsAvailable} portion(s) left
-                {d.ingredientsAvailable <= 0 ? ' — cannot fulfill new orders for this dish.' : '.'}
+            {lowIngredients.map((ing) => (
+              <li key={ing.id}>
+                <strong>{ing.name}</strong>: {ing.quantity_in_stock} {ing.unit}
+                {Number(ing.quantity_in_stock) <= 0 ? ' — cannot fulfill related orders.' : ' — running low.'}
               </li>
             ))}
           </ul>
@@ -146,11 +144,25 @@ export default function StaffPortal({
             <input type="date" className="form-input w-auto" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
             <span>to</span>
             <input type="date" className="form-input w-auto" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-            {(startDate || endDate) && (
-              <button type="button" className="btn-cancel" onClick={() => { setStartDate(''); setEndDate(''); }}>
-                Clear
-              </button>
-            )}
+            <button
+              type="button"
+              className="btn-apply"
+              onClick={() => onFilterOrdersByDate?.(startDate, endDate)}
+              disabled={!startDate || !endDate}
+            >
+              Apply
+            </button>
+            <button
+              type="button"
+              className="btn-cancel"
+              onClick={() => {
+                setStartDate('');
+                setEndDate('');
+                onFilterOrdersByDate?.('', '');
+              }}
+            >
+              Show All
+            </button>
           </div>
           <table className="data-table">
             <thead>
@@ -159,10 +171,10 @@ export default function StaffPortal({
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.length === 0 ? (
+              {orders.length === 0 ? (
                 <tr><td colSpan="7" className="text-muted" style={{ textAlign: 'center' }}>No orders found for the selected range.</td></tr>
               ) : (
-                filteredOrders.map((ord) => (
+                orders.map((ord) => (
                   <tr key={ord.id}>
                     <td><strong>{ord.id}</strong></td>
                     <td>{ord.guestName}</td>
@@ -199,13 +211,14 @@ export default function StaffPortal({
                   ))}
                   {selectedOrder.promoCodeUsed && <p><strong>Promo:</strong> {selectedOrder.promoCodeUsed}</p>}
                   <hr />
-                  <h4>Items Ordered</h4>
+                  <p><strong>Items:</strong></p>
                   <ul>
                     {(selectedOrder.items || []).map((item, i) => (
-                      <li key={i}>{item.quantity}x {item.name}{item.price != null ? ` (${money(item.price)})` : ''}</li>
+                      <li key={i}>
+                        {item.quantity}x {item.name} — {money(item.price)}
+                      </li>
                     ))}
                   </ul>
-                  <p><strong>Total:</strong> {money(selectedOrder.total)}</p>
                 </div>
                 <div className="btn-row">
                   <button type="button" className="btn-cancel" onClick={() => setSelectedOrder(null)}>Close</button>
@@ -225,7 +238,7 @@ export default function StaffPortal({
           <table className="data-table">
             <thead>
               <tr>
-                <th>Item</th><th>Category</th><th>Price</th><th>Ingredients</th><th>Tags</th><th>Status</th><th>Actions</th>
+                <th>Item</th><th>Category</th><th>Price</th><th>Tags</th><th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -234,17 +247,7 @@ export default function StaffPortal({
                   <td><strong>{item.name}</strong></td>
                   <td>{item.category}</td>
                   <td>{money(item.price)}</td>
-                  <td>
-                    <span className={`badge ${(item.ingredientsAvailable ?? 0) <= 3 ? 'danger' : 'success'}`}>
-                      {item.ingredientsAvailable ?? 0} left
-                    </span>
-                  </td>
                   <td>{(item.dietaryTags || []).join(', ') || '—'}</td>
-                  <td>
-                    <span className={`badge ${item.isAvailable ? 'success' : 'danger'}`}>
-                      {item.isAvailable ? 'Available' : 'Unavailable'}
-                    </span>
-                  </td>
                   <td>
                     <button type="button" className="btn-cancel action-gap" onClick={() => openDish(item)}>Edit</button>
                     <button type="button" className="btn-copy danger" onClick={() => onDeleteDish(item.id)}>Delete</button>
@@ -261,35 +264,95 @@ export default function StaffPortal({
                 <label className="form-label">
                   Category
                   <select className="form-input" value={dishForm.category} onChange={setField('category')}>
-                    {['Appetizers', 'Mains', 'Drinks', 'Desserts', 'Kids'].map((c) => <option key={c} value={c}>{c}</option>)}
+                    {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </label>
                 <label className="form-label">Price ($)<input required type="number" step="0.01" className="form-input" value={dishForm.price} onChange={setField('price')} /></label>
               </div>
-              <label className="form-label">
-                Ingredients Available (portions)
-                <input required type="number" min="0" className="form-input" value={dishForm.ingredientsAvailable} onChange={setField('ingredientsAvailable')} />
-              </label>
               <div className="form-label">
                 Dietary Tags
                 <div className="chip-row" style={{ marginTop: 6 }}>
                   {DIETARY_OPTIONS.map((tag) => (
-                    <button key={tag} type="button" className={`chip-btn ${dishForm.dietaryTags.includes(tag) ? 'active' : ''}`} onClick={() => toggleDietary(tag)}>
+                    <button
+                      key={tag}
+                      type="button"
+                      className={`chip-btn ${dishForm.dietaryTags.includes(tag) ? 'active' : ''}`}
+                      onClick={() => toggleDietary(tag)}
+                    >
                       {tag}
                     </button>
                   ))}
                 </div>
               </div>
-              <label className="form-label inline">
-                <input type="checkbox" checked={dishForm.isAvailable} onChange={setField('isAvailable')} />
-                Available for ordering
-              </label>
               <div className="btn-row">
                 <button type="button" className="btn-cancel" onClick={() => setIsDishOpen(false)}>Cancel</button>
                 <button type="submit" className="btn-submit">Save Item</button>
               </div>
             </form>
           </Modal>
+        </div>
+      )}
+
+      {tab === 'ingredients' && (
+        <div>
+          <h3 className="admin-section-title">Ingredient Stock</h3>
+          <p className="text-muted text-sm">
+            Orders are blocked at checkout if a recipe needs more than the stock shown here.
+          </p>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Ingredient</th><th>Stock</th><th>Unit</th><th>Status</th><th>Update Stock</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ingredients.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="text-muted" style={{ textAlign: 'center' }}>
+                    No ingredients yet.
+                  </td>
+                </tr>
+              ) : (
+                ingredients.map((ing) => (
+                  <tr key={ing.id}>
+                    <td><strong>{ing.name}</strong></td>
+                    <td>{ing.quantity_in_stock}</td>
+                    <td>{ing.unit}</td>
+                    <td>
+                      <span className={`badge ${Number(ing.quantity_in_stock) <= 50 ? 'danger' : 'success'}`}>
+                        {Number(ing.quantity_in_stock) <= 0
+                          ? 'Empty'
+                          : Number(ing.quantity_in_stock) <= 50
+                            ? 'Low'
+                            : 'OK'}
+                      </span>
+                    </td>
+                    <td>
+                      <form
+                        className="row"
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          const value = e.target.elements.stock.value;
+                          onUpdateIngredient?.(ing.id, { quantity_in_stock: Number(value) });
+                        }}
+                      >
+                        <input
+                          name="stock"
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          className="form-input w-auto"
+                          defaultValue={ing.quantity_in_stock}
+                          style={{ width: 110 }}
+                        />
+                        <button type="submit" className="btn-copy">Save</button>
+                      </form>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       )}
 
@@ -377,6 +440,27 @@ export default function StaffPortal({
                         <span className="no-complaints">No complaints</span>
                       )}
                     </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+
+          <h4 className="text-green" style={{ marginTop: 20 }}>All Reviews ({reviews.length})</h4>
+          <table className="data-table">
+            <thead>
+              <tr><th>Dish</th><th>Rating</th><th>Customer</th><th>Comment</th></tr>
+            </thead>
+            <tbody>
+              {reviews.length === 0 ? (
+                <tr><td colSpan="4" className="text-muted" style={{ textAlign: 'center' }}>No reviews yet.</td></tr>
+              ) : (
+                reviews.map((rev) => (
+                  <tr key={rev.id}>
+                    <td>{rev.dishName}</td>
+                    <td>★ {rev.rating}</td>
+                    <td>{rev.customerName}</td>
+                    <td>{rev.comment || '—'}</td>
                   </tr>
                 ))
               )}

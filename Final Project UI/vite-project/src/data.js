@@ -25,13 +25,14 @@ export function useToast(ms = 3000) {
   return [message, showToast];
 }
 
-export const CATEGORIES = ['All', 'Appetizers', 'Mains', 'Drinks', 'Desserts', 'Kids'];
+export const CATEGORIES = ['Appetizers', 'Mains', 'Drinks', 'Desserts', 'Kids'];
 export const DIETARY_FILTERS = ['All', 'Vegetarian', 'Vegan', 'Gluten-Free'];
 export const DIETARY_OPTIONS = ['Vegetarian', 'Vegan', 'Gluten-Free'];
 export const ORDER_STATUSES = ['Preparing', 'Ready', 'Delivered', 'Cancelled'];
 export const STAFF_TABS = [
   ['orders', 'Orders & Details'],
   ['menu', 'Menu CRUD'],
+  ['ingredients', 'Ingredients'],
   ['promos', 'Promo Codes'],
   ['analytics', 'Revenue & Reviews']
 ];
@@ -41,39 +42,8 @@ export const EMPTY_DISH = {
   price: '',
   category: 'Mains',
   description: '',
-  dietaryTags: [],
-  ingredientsAvailable: 10,
-  isAvailable: true,
-  image: '/breadsticks.jpg'
+  dietaryTags: []
 };
-
-const dish = (id, name, description, price, category, dietaryTags, ingredientsAvailable, image) => ({
-  id,
-  name,
-  description,
-  price,
-  category,
-  dietaryTags,
-  isAvailable: true,
-  ingredientsAvailable,
-  image
-});
-
-export const INITIAL_DISHES = [
-  dish(1, 'Breadsticks', 'Warm soft breadsticks served with marinara.', 5.99, 'Appetizers', ['Vegetarian'], 20, '/breadsticks.jpg'),
-  dish(2, 'Breadsticks (Gluten-Free)', 'Gluten-free breadsticks served with marinara.', 6.99, 'Appetizers', ['Vegetarian', 'Gluten-Free'], 12, '/breadsticks.jpg'),
-  dish(3, 'Spaghetti and Meatballs', 'Classic spaghetti topped with house meatballs and marinara.', 14.99, 'Mains', [], 18, '/spaghetti-and-meatballs.jpg'),
-  dish(4, 'Spaghetti and Meatballs (Gluten-Free)', 'Gluten-free spaghetti topped with house meatballs and marinara.', 15.99, 'Mains', ['Gluten-Free'], 10, '/spaghetti-and-meatballs.jpg'),
-  dish(5, 'Lasagna', 'Layered pasta with meat sauce, ricotta, and mozzarella.', 15.49, 'Mains', [], 14, '/lasagna.jpg'),
-  dish(6, 'Lasagna (Gluten-Free)', 'Gluten-free layered pasta with meat sauce, ricotta, and mozzarella.', 16.49, 'Mains', ['Gluten-Free'], 8, '/lasagna.jpg'),
-  dish(7, 'Fanta', 'Chilled orange Fanta.', 2.99, 'Drinks', [], 30, '/fanta.jpg'),
-  dish(8, 'Cherry Coke', 'Chilled cherry Coca-Cola.', 2.99, 'Drinks', [], 30, '/cherry-coke.jpg'),
-  dish(9, 'Lemonade', 'Fresh-squeezed classic lemonade.', 3.49, 'Drinks', [], 25, '/lemonade.jpg'),
-  dish(10, 'Strawberry Lemonade', 'Fresh lemonade blended with strawberry puree.', 3.99, 'Drinks', [], 25, '/strawberry-lemonade.jpg'),
-  dish(11, 'Cheesecake', 'Creamy New York–style cheesecake.', 6.99, 'Desserts', ['Vegetarian'], 10, '/cheesecake.jpg'),
-  dish(12, 'Kids Chicken Tenders and Fries', 'Crispy chicken tenders with a side of fries. Kids portion.', 7.99, 'Kids', [], 15, '/kids-chicken-tenders.avif'),
-  dish(13, 'Kids Mac and Cheese', 'Creamy macaroni and cheese. Kids portion.', 6.99, 'Kids', ['Vegetarian'], 15, '/kids-mac-and-cheese.jpg')
-];
 
 export const INITIAL_ORDERS = [
   {
