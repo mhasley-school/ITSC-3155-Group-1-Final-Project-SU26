@@ -9,7 +9,7 @@ export default function Header({ totalCartCount, onOpenCart, activeView, setActi
     <header className="app-header">
       <div className="header-content">
         <div className="brand-group">
-          <h2 className="brand-title">Name for restaurant</h2>
+          <h2 className="brand-title">Breadsticks</h2>
           <div className="nav-tabs">
             {NAV.map(({ id, label, staff }) => (
               <button
